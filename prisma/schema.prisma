@@ -18,8 +18,11 @@ model User {
   firstName String?
   lastName  String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+
+  @@map("users")
 }
 
 model Project {
@@ -30,6 +33,15 @@ model Project {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // 1-n relationship with user table
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  // 1-n relationship with todo(s) table
+  todos Todo[]
+
+  @@map("projects")
 }
 
 model Todo {
@@ -41,4 +53,10 @@ model Todo {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // 1-n relationship with project table
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+
+  @@map("todo")
 }
