@@ -10,13 +10,17 @@ import { JwtGuard } from 'src/auth/guard';
 @Controller('users')
 export class UserController {
   @Get('me')
-  getMe(@GetUser() user: User) {
+  getMe(@GetUser() user: User, @GetUser('email') email: string) {
     // getMe(@Req() Req: Request) -> espressione sostituita con un custom decorator @getUser
     // definito in auth/decorator/get-user.decorator.ts
     //tipo "user" fornito da prisma -> corrisponde interamente alla tabella user
 
+    // GetUser('email') indica l'altra possibile funzione del nostro custom decorator,
+    // ovvero ritrovare uno specifico dato dello user (vedi decorator)
+    console.log(email);
     return user;
   }
+
   //   @Patch(){
 
   //   }
