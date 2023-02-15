@@ -1,13 +1,15 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AuthDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
 
 //libreria per criptare passwords
 import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  // Dependency injections per il service di prisma e il modulo Jwt
+  constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
   async signup(dto: AuthDto) {
     // generare password hash
@@ -24,8 +26,7 @@ export class AuthService {
         },
       });
 
-      delete user.hash;
-      return user;
+      return this.signToken(user.id, user.email);
     } catch (error) {
       // CATCH dell'integrity violation di "unique" per l'email
       // Se l'errore ha codice P2002 => violazione della condizione "unique"
@@ -60,9 +61,20 @@ export class AuthService {
     }
 
     // Se pw corretta -> send user
-    // non mando password
-    delete user.hash;
+    return this.signToken(user.id, user.email);
+  }
 
-    return user;
+  async signToken(userId: number, email: string) {
+    const payload = {
+      sub: userId,
+      email,
+    };
+
+    return {
+      access_token: await this.jwt.signAsync(payload, {
+        expiresIn: '15m',
+        secret: process.env.JWT_SECRET,
+      }),
+    };
   }
 }
