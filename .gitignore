@@ -5,6 +5,7 @@
 # DB
 docker-compose.yml
 .env
+.env.test
 
 # Logs
 logs
