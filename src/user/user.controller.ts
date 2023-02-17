@@ -17,7 +17,6 @@ export class UserController {
 
     // GetUser('email') indica l'altra possibile funzione del nostro custom decorator,
     // ovvero ritrovare uno specifico dato dello user (vedi decorator)
-    console.log(email);
     return user;
   }
 
