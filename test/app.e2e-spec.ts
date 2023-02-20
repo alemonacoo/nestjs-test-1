@@ -96,6 +96,16 @@ describe('App e2e', () => {
           .expectStatus(200)
           .stores('userAT', 'access_token');
       });
+      it('Should throw e. if wrong credentials', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody({
+            email: 'dontexist@gmail.com',
+            password: 'dontexist',
+          })
+          .expectStatus(403);
+      });
     });
   });
 
