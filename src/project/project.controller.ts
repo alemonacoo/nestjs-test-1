@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -61,6 +63,7 @@ export class ProjectController {
   }
 
   // Delete project by id
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   deleteProjectById(
     @GetUser('id') userId: number,
