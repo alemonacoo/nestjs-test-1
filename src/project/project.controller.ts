@@ -47,12 +47,17 @@ export class ProjectController {
   }
 
   // Edit project by id
-  @Patch()
+  @Patch(':id')
   editProjectById(
     @GetUser('id') userId: number,
     @Body() dto: EditProjectDto,
+    @Param('id', ParseIntPipe) projectId: number,
   ) {
-    return this.projectService.editProjectById(userId, dto);
+    return this.projectService.editProjectById(
+      userId,
+      dto,
+      projectId,
+    );
   }
 
   // Delete project by id
