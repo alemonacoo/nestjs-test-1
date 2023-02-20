@@ -6,5 +6,5 @@ export class CreateProjectDto {
 
   @IsString()
   @IsOptional()
-  descritpion?: string;
+  description?: string;
 }
