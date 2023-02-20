@@ -184,7 +184,7 @@ describe('App e2e', () => {
           .expectStatus(201)
           .stores('projectId', 'id');
       });
-      // 2nd Project
+      // Second Project
       it('Should Create 2nd project', () => {
         const dto2: CreateProjectDto = {
           name: 'Secondo progetto',
@@ -199,11 +199,27 @@ describe('App e2e', () => {
           .withBody(dto2)
           .expectStatus(201);
       });
+      // Third Project
+      it('Should Create 3rd project', () => {
+        const dto3: CreateProjectDto = {
+          name: 'Terzo progetto',
+          description: 'lorem ipsum bla bla bla',
+        };
+
+        return pactum
+          .spec()
+          .post('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto3)
+          .expectStatus(201);
+      });
     });
 
     // Get projects
-    describe('Get ALL Projects (2)', () => {
-      it('Should return 1+1 projects', () => {
+    describe('Get ALL Projects (3)', () => {
+      it('Should return 3 projects', () => {
         return pactum
           .spec()
           .get('/projects')
@@ -211,7 +227,7 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .expectStatus(200)
-          .expectJsonLength(2);
+          .expectJsonLength(3);
       });
     });
 
@@ -266,7 +282,7 @@ describe('App e2e', () => {
           .expectStatus(204)
           .expectBodyContains('');
       });
-      it('Should get only 1 project left', () => {
+      it('Should get only 2 projects left', () => {
         return pactum
           .spec()
           .get('/projects')
@@ -274,7 +290,7 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .expectStatus(200)
-          .expectJsonLength(1);
+          .expectJsonLength(2);
       });
     });
   });
