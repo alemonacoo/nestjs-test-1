@@ -32,6 +32,7 @@ describe('App e2e', () => {
 
     // Svuota il Database da ogni user (e sotto-tabelle) ad ogni nuova inizializzazione
     const prisma = app.get(PrismaService);
+    await prisma.project.deleteMany({});
     await prisma.user.deleteMany({});
 
     // Imposta url di base
@@ -158,18 +159,18 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .expectStatus(200)
-          .expectBodyContains('')
-          .inspect();
+          .expectBodyContains('');
       });
     });
-    describe('Get Projects', () => {});
-    describe('Create Test', () => {
-      it('Should Create new Test', () => {
-        const dto: CreateProjectDto = {
-          title: 'First Test',
-          description: 'Il mio primo progetto in nest',
-        };
 
+    // Create Projects
+    describe('Create Projects', () => {
+      // First Project
+      it('Should Create 1st project', () => {
+        const dto: CreateProjectDto = {
+          name: 'Primo progetto',
+          description: 'lorem ipsum',
+        };
         return pactum
           .spec()
           .post('/projects')
@@ -178,17 +179,60 @@ describe('App e2e', () => {
           })
           .withBody(dto)
           .expectStatus(201)
-          .inspect();
+          .stores('projectId', 'id');
+      });
+      // 2nd Project
+      it('Should Create 2nd project', () => {
+        const dto2: CreateProjectDto = {
+          name: 'Secondo progetto',
+        };
+
+        return pactum
+          .spec()
+          .post('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto2)
+          .expectStatus(201);
       });
     });
-    describe('Get Test by id', () => {});
-    describe('Edit Test by id', () => {});
-    describe('Delete Test by id', () => {});
+
+    // Get JSON with all the projects
+    describe('Get ALL Projects (2)', () => {
+      it('Should return 1+1 projects', () => {
+        return pactum
+          .spec()
+          .get('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(2);
+      });
+    });
+
+    // Get project by ID
+    describe('Get Project by id', () => {
+      it('Should get 1st project', () => {
+        return pactum
+          .spec()
+          .get('/projects/{id}')
+          .withPathParams('id', '$S{projectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{projectId}');
+      });
+    });
+    describe('Edit Project by id', () => {});
+    describe('Delete Project by id', () => {});
   });
 
   // Todo(s)
   describe('To-Do(s)', () => {
-    describe('Get Projects', () => {});
+    describe('Get To-Do(s)', () => {});
     describe('Create to-do', () => {});
     describe('Get to-do by id', () => {});
     describe('Edit to-do status by id', () => {});

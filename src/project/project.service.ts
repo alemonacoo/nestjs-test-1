@@ -7,16 +7,44 @@ export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
   // Get projects
-  getProjects(userId: number) {}
+  getProjects(userId: number) {
+    return this.prisma.project.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
 
   // Get project by id
-  getProjectById(userId: number, projectId: number) {}
+  getProjectById(userId: number, projectId: number) {
+    return this.prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId,
+      },
+    });
+  }
 
   // Create project
-  createProject(userId: number, dto: CreateProjectDto) {}
+  async createProject(
+    userId: number,
+    dto: CreateProjectDto,
+  ) {
+    const project = await this.prisma.project.create({
+      data: {
+        userId,
+        ...dto,
+      },
+    });
+    return project;
+  }
 
   // Edit project
-  editProjectById(userId: number, dto: EditProjectDto) {}
+  editProjectById(
+    userId: number,
+    dto: EditProjectDto,
+    projectId: number,
+  ) {}
 
   // Delete project
   deleteProjectById(userId: number, projectId: number) {}
