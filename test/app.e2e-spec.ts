@@ -4,6 +4,7 @@ import { AppModule } from 'src/app.module';
 import * as pactum from 'pactum';
 import { AuthDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EditUserDto } from 'src/user/dto';
 
 describe('App e2e', () => {
   // Creo un modulo di test che importa l'intero AppModule
@@ -122,8 +123,24 @@ describe('App e2e', () => {
           .expectStatus(200);
       });
     });
-    describe('Edit User', () => {});
-    describe('Edit User', () => {});
+    describe('Edit User', () => {
+      it('Should edit user', () => {
+        const dto: EditUserDto = {
+          email: 'ale2@gmail.com',
+          lastName: 'Developer',
+        };
+        return pactum
+          .spec()
+          .patch('/users')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.email)
+          .expectBodyContains(dto.lastName);
+      });
+    });
   });
 
   // Projects
