@@ -1,10 +1,14 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import * as pactum from 'pactum';
 import { AuthDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EditUserDto } from 'src/user/dto';
+import { CreateProjectDto } from 'src/project/dto';
 
 describe('App e2e', () => {
   // Creo un modulo di test che importa l'intero AppModule
@@ -145,11 +149,41 @@ describe('App e2e', () => {
 
   // Projects
   describe('Projects', () => {
+    describe('Get NO Projects', () => {
+      it('Should return NO Projects', () => {
+        return pactum
+          .spec()
+          .get('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('')
+          .inspect();
+      });
+    });
     describe('Get Projects', () => {});
-    describe('Create Project', () => {});
-    describe('Get Project by id', () => {});
-    describe('Edit Project by id', () => {});
-    describe('Delete Project by id', () => {});
+    describe('Create Test', () => {
+      it('Should Create new Test', () => {
+        const dto: CreateProjectDto = {
+          title: 'First Test',
+          description: 'Il mio primo progetto in nest',
+        };
+
+        return pactum
+          .spec()
+          .post('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(201)
+          .inspect();
+      });
+    });
+    describe('Get Test by id', () => {});
+    describe('Edit Test by id', () => {});
+    describe('Delete Test by id', () => {});
   });
 
   // Todo(s)
