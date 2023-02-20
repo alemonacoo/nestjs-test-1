@@ -8,7 +8,10 @@ import * as pactum from 'pactum';
 import { AuthDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EditUserDto } from 'src/user/dto';
-import { CreateProjectDto } from 'src/project/dto';
+import {
+  CreateProjectDto,
+  EditProjectDto,
+} from 'src/project/dto';
 
 describe('App e2e', () => {
   // Creo un modulo di test che importa l'intero AppModule
@@ -148,7 +151,7 @@ describe('App e2e', () => {
     });
   });
 
-  // Projects
+  // PROJECTS
   describe('Projects', () => {
     describe('Get NO Projects', () => {
       it('Should return NO Projects', () => {
@@ -198,7 +201,7 @@ describe('App e2e', () => {
       });
     });
 
-    // Get JSON with all the projects
+    // Get projects
     describe('Get ALL Projects (2)', () => {
       it('Should return 1+1 projects', () => {
         return pactum
@@ -226,11 +229,57 @@ describe('App e2e', () => {
           .expectBodyContains('$S{projectId}');
       });
     });
-    describe('Edit Project by id', () => {});
-    describe('Delete Project by id', () => {});
+
+    // Edit project
+    describe('Edit Project by id', () => {
+      it('Should Modify 1st project', () => {
+        const dto: EditProjectDto = {
+          name: 'NOME MODIFICATO!',
+          description: 'DESCRIZIONE MODIFICATA!',
+        };
+        return pactum
+          .spec()
+          .patch('/projects/{id}')
+          .withPathParams('id', '$S{projectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.description)
+          .expectBodyContains(dto.name);
+      });
+
+      //Delete project
+    });
+
+    // Delete Project
+    describe('Delete Project by id', () => {
+      it('Should delete 1st project', () => {
+        return pactum
+          .spec()
+          .delete('/projects/{id}')
+          .withPathParams('id', '$S{projectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(204)
+          .expectBodyContains('');
+      });
+      it('Should get only 1 project left', () => {
+        return pactum
+          .spec()
+          .get('/projects')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(1);
+      });
+    });
   });
 
-  // Todo(s)
+  // TO-DO(s)
   describe('To-Do(s)', () => {
     describe('Get To-Do(s)', () => {});
     describe('Create to-do', () => {});
