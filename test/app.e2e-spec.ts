@@ -110,13 +110,21 @@ describe('App e2e', () => {
     //
     // SIGN-IN
     describe('Signing', () => {
-      it('Should sign-in', () => {
+      it('Should sign-in User1', () => {
         return pactum
           .spec()
           .post('/auth/signin')
           .withBody(dto)
           .expectStatus(200)
           .stores('userAT', 'access_token');
+      });
+      it('Should sign-in User2', () => {
+        return pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(dto2)
+          .expectStatus(200)
+          .stores('userAT2', 'access_token');
       });
       it('Should throw e. if wrong credentials', () => {
         return pactum
@@ -286,7 +294,7 @@ describe('App e2e', () => {
 
     // Delete Project
     describe('Delete Project by id', () => {
-      it('Should delete 1st project', () => {
+      it('Should delete 1st project for User1', () => {
         return pactum
           .spec()
           .delete('/projects/{id}')
