@@ -434,5 +434,22 @@ describe('App e2e', () => {
   });
 
   //TODO: STRESS TESTS:
-  describe('Stress tests', () => {});
+  describe('Stress tests', () => {
+    it('should throw when trying to access another user todos', () => {
+      return pactum
+        .spec()
+        .get('/projects/{id}/todos')
+        .withPathParams('id', '$S{thirdProjectId}')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAT}',
+        })
+        .expectStatus(403)
+        .inspect();
+    });
+    it('', () => {});
+    it('', () => {});
+    it('', () => {});
+  });
+  describe('should delete todos correctly when deleting project', () => {});
+  describe('should delete projects correctly when deleting user', () => {});
 });

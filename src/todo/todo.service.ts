@@ -14,7 +14,11 @@ export class TodoService {
   // Get All TO-DOs in project
   async getToDos(projectId: number, userId: number) {
     // controllo appartenenza ad user
-    this.checkProjectUser(projectId, userId);
+    if (!this.checkProjectUser(projectId, userId)) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
 
     return await this.prisma.todo.findMany({
       where: {
@@ -31,8 +35,13 @@ export class TodoService {
         id: toDoId,
       },
     });
+
     // controllo appartenenza ad user
-    this.checkProjectUser(todo.projectId, userId);
+    if (!this.checkProjectUser(todo.projectId, userId)) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
 
     return await this.prisma.todo.findFirst({
       where: {
@@ -48,7 +57,11 @@ export class TodoService {
     userId: number,
   ) {
     // controllo appartenenza ad user
-    this.checkProjectUser(projectId, userId);
+    if (!this.checkProjectUser(projectId, userId)) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
 
     return await this.prisma.todo.create({
       data: {
@@ -72,7 +85,11 @@ export class TodoService {
     });
 
     // Controllo appartenenza user
-    this.checkProjectUser(todo.projectId, userId);
+    if (!this.checkProjectUser(todo.projectId, userId)) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
 
     return this.prisma.todo.update({
       where: {
@@ -93,7 +110,11 @@ export class TodoService {
     });
 
     // Controllo appartenenza user
-    this.checkProjectUser(todo.projectId, userId);
+    if (!this.checkProjectUser(todo.projectId, userId)) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
 
     return this.prisma.todo.delete({
       where: {
@@ -118,9 +139,8 @@ export class TodoService {
     // Guard condition: dobbiamo essere sicuri che il todo...
     // appartenga al progetto e che il progetto appartenga allo user
     if (!project || project.userId !== userId) {
-      throw new ForbiddenException(
-        'Access to resource denied',
-      );
+      return false;
     }
+    return true;
   }
 }
