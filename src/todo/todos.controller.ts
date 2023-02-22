@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -7,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
+import { CreateToDoDto } from './dto/create-todo.dto';
 import { TodoService } from './todo.service';
 
 @UseGuards(JwtGuard)
@@ -24,5 +26,10 @@ export class TodosController {
 
   // Create to-do
   @Post()
-  createToDo() {}
+  createToDo(
+    @Param('project', ParseIntPipe) projectId: number,
+    @Body() dto: CreateToDoDto,
+  ) {
+    return this.toDoService.createToDo(projectId, dto);
+  }
 }

@@ -35,6 +35,7 @@ describe('App e2e', () => {
 
     // Svuota il Database da ogni user (e sotto-tabelle) ad ogni nuova inizializzazione
     const prisma = app.get(PrismaService);
+    await prisma.todo.deleteMany({});
     await prisma.project.deleteMany({});
     await prisma.user.deleteMany({});
 
@@ -311,7 +312,54 @@ describe('App e2e', () => {
           .expectJsonLength(0);
       });
     });
-    describe('Create to-do', () => {});
+    describe('Create to-do', () => {
+      it('Should Create 1st To-Do', () => {
+        const dto = {
+          title: 'Prima cosa da fare',
+          description:
+            'aggiungere questo elemento alla todo',
+          status: false,
+        };
+        return pactum
+          .spec()
+          .post('/projects/{id}/todos')
+          .withPathParams('id', '$S{thirdProjectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(201);
+      });
+      it('Should Create 2nd To-Do', () => {
+        const dto = {
+          title: 'Seconda cosa da fare',
+          description:
+            'aggiungere questo elemento alla todo',
+          status: false,
+        };
+        return pactum
+          .spec()
+          .post('/projects/{id}/todos')
+          .withPathParams('id', '$S{thirdProjectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(201);
+      });
+      it('Should get 2 to-dos for project 3', () => {
+        return pactum
+          .spec()
+          .get('/projects/{id}/todos')
+          .withPathParams('id', '$S{thirdProjectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(2)
+          .inspect();
+      });
+    });
     describe('Get to-do by id', () => {});
     describe('Edit to-do status by id', () => {});
     describe('Delete to-do by id', () => {});
