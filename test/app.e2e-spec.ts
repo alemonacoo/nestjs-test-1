@@ -213,7 +213,8 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .withBody(dto3)
-          .expectStatus(201);
+          .expectStatus(201)
+          .stores('thirdProjectId', 'id');
       });
     });
 
@@ -297,7 +298,19 @@ describe('App e2e', () => {
 
   // TO-DO(s)
   describe('To-Do(s)', () => {
-    describe('Get To-Do(s)', () => {});
+    describe('Get 0 To-Do(s)', () => {
+      it('Should get NO to-dos for project 3', () => {
+        return pactum
+          .spec()
+          .get('/projects/{id}/todos')
+          .withPathParams('id', '$S{thirdProjectId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(0);
+      });
+    });
     describe('Create to-do', () => {});
     describe('Get to-do by id', () => {});
     describe('Edit to-do status by id', () => {});
