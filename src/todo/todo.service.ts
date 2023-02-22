@@ -12,7 +12,10 @@ export class TodoService {
   constructor(private prisma: PrismaService) {}
 
   // Get All TO-DOs in project
-  async getToDos(projectId: number) {
+  async getToDos(projectId: number, userId: number) {
+    // controllo su user
+    this.checkProjectUser(projectId, userId);
+
     return await this.prisma.todo.findMany({
       where: {
         projectId,
@@ -30,7 +33,14 @@ export class TodoService {
   }
 
   // Create new TO-DO in project
-  async createToDo(projectId: number, dto: CreateToDoDto) {
+  async createToDo(
+    projectId: number,
+    dto: CreateToDoDto,
+    userId: number,
+  ) {
+    // controllo su user
+    this.checkProjectUser(projectId, userId);
+
     return await this.prisma.todo.create({
       data: {
         projectId,
@@ -49,5 +59,25 @@ export class TodoService {
         ...dto,
       },
     });
+  }
+
+  // FUNZIONE DI SICUREZZA
+  private async checkProjectUser(
+    projectId: number,
+    userId: number,
+  ) {
+    // Cerco progetto
+    const project = await this.prisma.project.findFirst({
+      where: {
+        id: projectId,
+      },
+    });
+    // Guard condition: dobbiamo essere sicuri che il todo...
+    // appartenga al progetto e che il progetto appartenga allo user
+    if (!project || project.userId !== userId) {
+      throw new ForbiddenException(
+        'Access to resource denied',
+      );
+    }
   }
 }
