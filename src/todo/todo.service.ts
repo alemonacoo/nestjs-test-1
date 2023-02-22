@@ -13,7 +13,7 @@ export class TodoService {
 
   // Get All TO-DOs in project
   async getToDos(projectId: number, userId: number) {
-    // controllo su user
+    // controllo appartenenza ad user
     this.checkProjectUser(projectId, userId);
 
     return await this.prisma.todo.findMany({
@@ -24,7 +24,16 @@ export class TodoService {
   }
 
   // Get To-Do by Id
-  async getToDo(toDoId: number) {
+  async getToDo(toDoId: number, userId: number) {
+    // cerco todo
+    const todo = await this.prisma.todo.findFirst({
+      where: {
+        id: toDoId,
+      },
+    });
+    // controllo appartenenza ad user
+    this.checkProjectUser(todo.projectId, userId);
+
     return await this.prisma.todo.findFirst({
       where: {
         id: toDoId,
@@ -38,7 +47,7 @@ export class TodoService {
     dto: CreateToDoDto,
     userId: number,
   ) {
-    // controllo su user
+    // controllo appartenenza ad user
     this.checkProjectUser(projectId, userId);
 
     return await this.prisma.todo.create({
@@ -49,8 +58,22 @@ export class TodoService {
     });
   }
 
-  // Edit to-do
-  async editToDo(toDoId: number, dto: EditToDoDto) {
+  // Edit to-do by id
+  async editToDo(
+    toDoId: number,
+    dto: EditToDoDto,
+    userId: number,
+  ) {
+    // cerco todo
+    const todo = await this.prisma.todo.findFirst({
+      where: {
+        id: toDoId,
+      },
+    });
+
+    // Controllo appartenenza user
+    this.checkProjectUser(todo.projectId, userId);
+
     return this.prisma.todo.update({
       where: {
         id: toDoId,
@@ -61,7 +84,9 @@ export class TodoService {
     });
   }
 
-  // FUNZIONE DI SICUREZZA
+  // FUNZIONE DI SICUREZZA: Evita che si possa accedere tramite id con
+  // l'access token di qualcun altro, ovvero che il to-do appartenga
+  // ad un progetto dello user
   private async checkProjectUser(
     projectId: number,
     userId: number,
