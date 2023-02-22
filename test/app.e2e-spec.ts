@@ -418,6 +418,21 @@ describe('App e2e', () => {
           .expectBodyContains(dto.title);
       });
     });
-    describe('Delete to-do by id', () => {});
+    describe('Delete to-do by id', () => {
+      it('Should DELETE 2nd to-do', () => {
+        return pactum
+          .spec()
+          .delete('/todos/{id}')
+          .withPathParams('id', '$S{toDoId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{toDoId}');
+      });
+    });
   });
+
+  //TODO: STRESS TESTS:
+  describe('Stress tests', () => {});
 });

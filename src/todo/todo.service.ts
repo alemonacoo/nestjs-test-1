@@ -84,6 +84,24 @@ export class TodoService {
     });
   }
 
+  // Delete to-do by id
+  async deleteToDo(toDoId: number, userId: number) {
+    const todo = await this.prisma.todo.findFirst({
+      where: {
+        id: toDoId,
+      },
+    });
+
+    // Controllo appartenenza user
+    this.checkProjectUser(todo.projectId, userId);
+
+    return this.prisma.todo.delete({
+      where: {
+        id: toDoId,
+      },
+    });
+  }
+
   // FUNZIONE DI SICUREZZA: Evita che si possa accedere tramite id con
   // l'access token di qualcun altro, ovvero che il to-do appartenga
   // ad un progetto dello user

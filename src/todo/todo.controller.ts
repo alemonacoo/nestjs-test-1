@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -34,5 +35,13 @@ export class TodoController {
     @GetUser('id') userId: number,
   ) {
     return this.toDoService.editToDo(toDoId, dto, userId);
+  }
+
+  @Delete(':id')
+  deleteToDo(
+    @Param('id', ParseIntPipe) toDoId: number,
+    @GetUser('id') userId: number,
+  ) {
+    return this.toDoService.deleteToDo(toDoId, userId);
   }
 }
