@@ -299,6 +299,7 @@ describe('App e2e', () => {
 
   // TO-DO(s)
   describe('To-Do(s)', () => {
+    // Get 0 to-dos
     describe('Get 0 To-Do(s)', () => {
       it('Should get NO to-dos for project 3', () => {
         return pactum
@@ -312,6 +313,8 @@ describe('App e2e', () => {
           .expectJsonLength(0);
       });
     });
+
+    // Create to-do
     describe('Create to-do', () => {
       it('Should Create 1st To-Do', () => {
         const dto = {
@@ -360,6 +363,8 @@ describe('App e2e', () => {
           .inspect();
       });
     });
+
+    // Get to-do by id
     describe('Get to-do by id', () => {});
     describe('Edit to-do status by id', () => {});
     describe('Delete to-do by id', () => {});
