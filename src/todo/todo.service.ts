@@ -16,6 +16,15 @@ export class TodoService {
     });
   }
 
+  // Get To-Do by Id
+  async getToDo(toDoId: number) {
+    return await this.prisma.todo.findFirst({
+      where: {
+        id: toDoId,
+      },
+    });
+  }
+
   // Create new TO-DO in project
   async createToDo(projectId: number, dto: CreateToDoDto) {
     return await this.prisma.todo.create({

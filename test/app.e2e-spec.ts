@@ -348,7 +348,8 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .withBody(dto)
-          .expectStatus(201);
+          .expectStatus(201)
+          .stores('toDoId', 'id');
       });
       it('Should get 2 to-dos for project 3', () => {
         return pactum
@@ -359,14 +360,37 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAT}',
           })
           .expectStatus(200)
-          .expectJsonLength(2)
-          .inspect();
+          .expectJsonLength(2);
       });
     });
 
     // Get to-do by id
-    describe('Get to-do by id', () => {});
-    describe('Edit to-do status by id', () => {});
+    describe('Get to-do by id', () => {
+      it('Should get 2nd to-do', () => {
+        return pactum
+          .spec()
+          .get('/todos/{id}')
+          .withPathParams('id', '$S{toDoId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{toDoId}');
+      });
+    });
+    describe('Edit to-do by id', () => {
+      // it('Should Edit 2nd to-do title', () => {
+      //   return pactum
+      //     .spec()
+      //     .patch('/todos/{id}')
+      //     .withPathParams('id', '$S{toDoId}')
+      //     .withHeaders({
+      //       Authorization: 'Bearer $S{userAT}',
+      //     })
+      //     .expectStatus(200)
+      //     .expectBodyContains('$S{toDoId}');
+      // });
+    });
     describe('Delete to-do by id', () => {});
   });
 });
