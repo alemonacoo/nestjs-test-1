@@ -53,20 +53,32 @@ describe('App e2e', () => {
   // AUTH
   describe('Auth', () => {
     //
-    // DTO
+    // DTOs
     const dto: AuthDto = {
       email: 'ale@gmail.com',
       password: '123',
       firstName: 'Alessandro',
     };
+    const dto2: AuthDto = {
+      email: 'ale2@gmail.com',
+      password: 'abc',
+      firstName: 'Alessio',
+    };
     //
     // SIGN-UP
     describe('Signup', () => {
-      it('should sign-up', () => {
+      it('should sign-up user1', () => {
         return pactum
           .spec()
           .post('/auth/signup')
           .withBody(dto)
+          .expectStatus(201);
+      });
+      it('should sign-up user2', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody(dto2)
           .expectStatus(201);
       });
       it('should throw e. if email empty', () => {
@@ -135,7 +147,7 @@ describe('App e2e', () => {
     describe('Edit User', () => {
       it('Should edit user', () => {
         const dto: EditUserDto = {
-          email: 'ale2@gmail.com',
+          email: 'ale1b@gmail.com',
           lastName: 'Developer',
         };
         return pactum
@@ -148,6 +160,7 @@ describe('App e2e', () => {
           .expectStatus(200)
           .expectBodyContains(dto.email)
           .expectBodyContains(dto.lastName);
+        // TODO: should check unique when edit!!
       });
     });
   });
@@ -221,7 +234,7 @@ describe('App e2e', () => {
 
     // Get projects
     describe('Get ALL Projects (3)', () => {
-      it('Should return 3 projects', () => {
+      it('Should return only 3 projects', () => {
         return pactum
           .spec()
           .get('/projects')
@@ -379,17 +392,23 @@ describe('App e2e', () => {
       });
     });
     describe('Edit to-do by id', () => {
-      // it('Should Edit 2nd to-do title', () => {
-      //   return pactum
-      //     .spec()
-      //     .patch('/todos/{id}')
-      //     .withPathParams('id', '$S{toDoId}')
-      //     .withHeaders({
-      //       Authorization: 'Bearer $S{userAT}',
-      //     })
-      //     .expectStatus(200)
-      //     .expectBodyContains('$S{toDoId}');
-      // });
+      it('Should Edit 2nd to-do title', () => {
+        const dto = {
+          title: 'Secondo to-do MODIFICATO',
+          des: 'sda',
+          status: true,
+        };
+        return pactum
+          .spec()
+          .patch('/todos/{id}')
+          .withPathParams('id', '$S{toDoId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAT}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.title);
+      });
     });
     describe('Delete to-do by id', () => {});
   });

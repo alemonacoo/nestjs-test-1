@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from 'src/project/dto';
 import { CreateToDoDto } from './dto/create-todo.dto';
+import { EditToDoDto } from './dto/edit-todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -30,6 +34,18 @@ export class TodoService {
     return await this.prisma.todo.create({
       data: {
         projectId,
+        ...dto,
+      },
+    });
+  }
+
+  // Edit to-do
+  async editToDo(toDoId: number, dto: EditToDoDto) {
+    return this.prisma.todo.update({
+      where: {
+        id: toDoId,
+      },
+      data: {
         ...dto,
       },
     });
